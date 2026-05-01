@@ -1,0 +1,33 @@
+# turbulence
+
+A chaos proxy that injects latency and drops requests, useful for testing how your services handle network failures.
+
+## Usage
+
+```
+turbulence [flags]
+```
+
+### Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-listen` | `:8080` | Address to listen on |
+| `-drop-rate` | `0.02` | Probability of dropping a request (0.0–1.0) |
+| `-delay-rate` | `0.2` | Probability of delaying a request (0.0–1.0) |
+| `-max-delay` | `1s` | Maximum random delay duration |
+
+### Example
+
+```
+turbulence --listen :9090 --drop-rate 0.1 --delay-rate 0.5 --max-delay 3s
+```
+
+Then point your HTTP client or `HTTP_PROXY` env var at `http://localhost:9090`.
+
+## How it works
+
+- **Drop** — returns `503 Service Unavailable` for a random percentage of requests
+- **Delay** — sleeps for a random duration (up to `max-delay`) on a percentage of requests
+- Supports both plain HTTP and HTTPS tunneling (`CONNECT`)
+- Logs structured JSON to stdout
