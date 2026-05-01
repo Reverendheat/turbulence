@@ -17,14 +17,14 @@ func main() {
 		}),
 	}
 
-	cfg.Logger.Info("chaos proxy listening", "port", cfg.Listen)
+	cfg.Logger.Info("turbulence proxy listening", "port", cfg.Listen)
 	cfg.Logger.Error("server error", "error", server.ListenAndServe())
 }
 
 func handleProxy(w http.ResponseWriter, r *http.Request, cfg Config) {
 	if shouldDrop(cfg) {
 		cfg.Logger.Info("dropping", "method", r.Method, "host", r.Host)
-		http.Error(w, "chaos proxy dropped request", http.StatusServiceUnavailable)
+		http.Error(w, "turbulence proxy dropped request", http.StatusServiceUnavailable)
 		return
 	}
 
