@@ -4,7 +4,7 @@ A chaos proxy that injects latency and drops requests, useful for testing how yo
 
 ## Usage
 
-```
+```sh
 turbulence [flags]
 ```
 
@@ -19,7 +19,7 @@ turbulence [flags]
 
 ### Example
 
-```
+```sh
 turbulence --listen :9090 --drop-rate 0.1 --delay-rate 0.5 --max-delay 3s
 ```
 
