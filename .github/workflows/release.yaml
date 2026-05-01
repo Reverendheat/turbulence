@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and release
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            name: turbulence-linux-amd64
+          - goos: linux
+            goarch: arm64
+            name: turbulence-linux-arm64
+          - goos: darwin
+            goarch: amd64
+            name: turbulence-darwin-amd64
+          - goos: darwin
+            goarch: arm64
+            name: turbulence-darwin-arm64
+          - goos: windows
+            goarch: amd64
+            name: turbulence-windows-amd64.exe
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.25.x"
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          mkdir -p dist
+          go build -trimpath -ldflags="-s -w" -o dist/${{ matrix.name }} .
+
+      - name: Create checksums
+        run: |
+          cd dist
+          sha256sum * > checksums-${{ matrix.goos }}-${{ matrix.goarch }}.txt
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*
