@@ -12,6 +12,9 @@ func main() {
 		}),
 	}
 
-	cfg.Logger.Info("turbulence proxy listening", "port", cfg.Listen)
-	cfg.Logger.Error("server error", "error", server.ListenAndServe())
+	cfg.Logger.Info("turbulence proxy listening", "addr", cfg.Listen)
+
+	if err := server.ListenAndServe(); err != nil {
+		cfg.Logger.Error("server error", "error", err)
+	}
 }
